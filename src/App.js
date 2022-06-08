@@ -1,23 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+// Components
+import { Layout } from "antd";
+import { Content, Footer } from "antd/lib/layout/layout";
+import AdminTable from "./components/AdminTable/AdminTable";
+import Header from "./components/Layouts/MyHeader";
+
+// CSS
+import "./App.css";
+import "antd/dist/antd.css";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <Layout>
+        <Header />
+        <Content
+          style={{
+            padding: "50px 50px 0",
+          }}
         >
-          Learn React
-        </a>
-      </header>
+          <AdminTable />
+        </Content>
+        <Footer style={{ textAlign: "center" }}>
+          Copyright 2022 @aksingh-codes
+        </Footer>
+      </Layout>
     </div>
   );
 }
