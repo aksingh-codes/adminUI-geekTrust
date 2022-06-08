@@ -2,7 +2,6 @@ import { Button, Table } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { DeleteOutlined, EditTwoTone } from "@ant-design/icons";
-// import columns from "./columns";
 
 export default function AdminTable() {
   const [users, setUsers] = useState([]);
@@ -58,7 +57,6 @@ export default function AdminTable() {
     {
       title: "Email",
       dataIndex: "email",
-      render: (text) => <a>{text}</a>,
     },
     {
       title: "Role",
