@@ -14,14 +14,14 @@ const openNotification = (placement, message) => {
 export default function AdminTable() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [form] = Form.useForm();
 
-  const removeUser = (id) => {
+  const removeUser = async (id) => {
     setLoading(true);
     let deletedUser;
+    console.log(users);
     const filtered = users.filter((user) => {
       if (user.id !== id) {
         return true;
@@ -29,8 +29,8 @@ export default function AdminTable() {
       deletedUser = user;
       return false;
     });
+
     setUsers(filtered);
-    setLoading(false);
     openNotification(
       "bottomLeft",
       `Deleted: ${deletedUser.name} successfully.`
@@ -56,7 +56,6 @@ export default function AdminTable() {
       return !found;
     });
     setUsers(filtered);
-    setLoading(false);
     const message =
       deletedUsers.length !== 0
         ? `Deleted: ${deletedUsers.toString()} succesfully.`
@@ -199,9 +198,23 @@ export default function AdminTable() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    setLoading(false);
+  }, [users]);
+
   const onFinish = (values) => {
+    setLoading(true);
     const updatedDataSource = [...users];
-    updatedDataSource.splice(editingRow - 1, 1, { ...values, id: editingRow });
+
+    const userIndex = updatedDataSource.findIndex(
+      (user) => user.id === editingRow
+    );
+    console.log(userIndex);
+
+    updatedDataSource[userIndex] = { ...values, id: editingRow };
+
+    console.log(users);
+    console.log(updatedDataSource);
     setUsers(updatedDataSource);
     setEditingRow(null);
   };
