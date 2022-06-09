@@ -1,8 +1,8 @@
 // Components
 import { Layout } from "antd";
 import { Content, Footer } from "antd/lib/layout/layout";
-import AdminTable from "./components/AdminTable/AdminTable";
-import Header from "./components/Layouts/MyHeader";
+import AdminTable from "./AdminTable/AdminTable";
+import Header from "./Layouts/MyHeader";
 
 // CSS
 import "./App.css";
@@ -13,11 +13,7 @@ function App() {
     <div className="App">
       <Layout>
         <Header />
-        <Content
-          style={{
-            padding: "50px 50px 0",
-          }}
-        >
+        <Content style={{ padding: "50px 50px 0" }}>
           <AdminTable />
         </Content>
         <Footer style={{ textAlign: "center" }}>
