@@ -14,7 +14,7 @@ const openNotification = (placement, message) => {
 export default function AdminTable() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  // const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [form] = Form.useForm();
@@ -66,7 +66,7 @@ export default function AdminTable() {
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedRowKeys(selectedRowKeys);
+      // setSelectedRowKeys(selectedRowKeys);
       setSelectedRows(selectedRows);
     },
     getCheckboxProps: (record) => ({
