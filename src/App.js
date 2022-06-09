@@ -6,7 +6,7 @@ import Header from "./components/Layouts/MyHeader";
 
 // CSS
 import "./App.css";
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css"; // https://github.com/ant-design/ant-design/issues/33327
 
 function App() {
   return (
