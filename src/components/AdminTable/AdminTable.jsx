@@ -1,73 +1,23 @@
-import { Button, Form, Input, notification, Table, Tooltip } from "antd";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
 import { DeleteOutlined, EditTwoTone, SaveOutlined } from "@ant-design/icons";
-import Search from "antd/lib/transfer/search";
+import { Button, Form, Input, Table } from "antd";
+import React from "react";
 
-const openNotification = (placement, message) => {
-  notification.info({
-    message: `Notification`,
-    description: `${message}`,
-    placement,
-  });
-};
+import search from "../../utils/search";
 
-export default function AdminTable() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [editingRow, setEditingRow] = useState(null);
-  const [form] = Form.useForm();
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const removeUser = async (id) => {
-    setLoading(true);
-    let deletedUser;
-    console.log(users);
-    const filtered = users.filter((user) => {
-      if (user.id !== id) {
-        return true;
-      }
-      deletedUser = user;
-      return false;
-    });
-
-    setUsers(filtered);
-    openNotification(
-      "bottomLeft",
-      `Deleted: ${deletedUser.name} successfully.`
-    );
-  };
-
-  const removeSelectedUsers = () => {
-    setLoading(true);
-    let deletedUsers = [];
-    const filtered = users.filter((user) => {
-      // if this user is found in selected Rows return false
-      // else return true
-      let found = false;
-      selectedRows.forEach((record) => {
-        if (record.id === user.id) {
-          found = true;
-          // delete key from selectedRowKey
-        }
-      });
-      if (found) {
-        deletedUsers.push(user.name);
-      }
-      return !found;
-    });
-    setUsers(filtered);
-    const message =
-      deletedUsers.length !== 0
-        ? `Deleted: ${deletedUsers.toString()} succesfully.`
-        : `Select something to delete.`;
-    openNotification("bottomRight", message);
-  };
-
+function AdminTable({
+  users,
+  searchQuery,
+  loading,
+  setLoading,
+  editingRow,
+  setUsers,
+  setEditingRow,
+  removeUser,
+  setSelectedRows,
+  form,
+}) {
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      // setSelectedRowKeys(selectedRowKeys);
       setSelectedRows(selectedRows);
     },
     getCheckboxProps: (record) => ({
@@ -154,7 +104,11 @@ export default function AdminTable() {
       render: (_, record) => {
         return (
           <div>
-            <Tooltip placement="top" title={"edit"}>
+            {editingRow === record.id ? (
+              <Button htmlType="submit" type="text" style={{ padding: 0 }}>
+                <SaveOutlined />
+              </Button>
+            ) : (
               <EditTwoTone
                 onClick={() => {
                   setEditingRow(record.id);
@@ -166,43 +120,17 @@ export default function AdminTable() {
                 }}
                 style={{ cursor: "pointer", marginRight: "4px" }}
               />
-            </Tooltip>
-            <Tooltip placement="top" title={"delete"}>
-              <DeleteOutlined
-                style={{ cursor: "pointer", marginRight: "4px", color: "red" }}
-                onClick={() => removeUser(record.id)}
-              />
-            </Tooltip>
-
-            {editingRow === record.id && (
-              <Tooltip placement="top" title={"save"}>
-                <Button htmlType="submit" type="text" style={{ padding: 0 }}>
-                  <SaveOutlined />
-                </Button>
-              </Tooltip>
             )}
+
+            <DeleteOutlined
+              style={{ cursor: "pointer", marginRight: "4px", color: "red" }}
+              onClick={() => removeUser(record.id)}
+            />
           </div>
         );
       },
     },
   ];
-
-  useEffect(() => {
-    setLoading(true);
-    axios
-      .get(
-        "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
-      )
-      .then((response) => {
-        setUsers(response.data);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    setLoading(false);
-  }, [users]);
 
   const onFinish = (values) => {
     setLoading(true);
@@ -221,49 +149,21 @@ export default function AdminTable() {
     setEditingRow(null);
   };
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value.toLowerCase());
-  };
-
-  const search = (user) => {
-    const foundName = user.name.toLowerCase().includes(searchQuery);
-    const foundEmail = user.email.toLowerCase().includes(searchQuery);
-    const foundRole = user.role.toLowerCase().includes(searchQuery);
-
-    if (foundName || foundEmail || foundRole) {
-      return true;
-    }
-    return false;
-  };
-
-  console.log(searchQuery);
-
   return (
-    <>
-      <div style={{ marginBottom: "8px" }}>
-        <Search placeholder="input search text" onChange={handleSearch} />
-      </div>
-      <Form form={form} onFinish={onFinish}>
-        <Table
-          rowSelection={{
-            type: "checkbox",
-            ...rowSelection,
-          }}
-          loading={loading}
-          pagination={{ position: ["bottomCenter"] }}
-          columns={columns}
-          dataSource={users.filter((user) => search(user))}
-          rowKey="id"
-        ></Table>
-      </Form>
-      <Button
-        type="danger"
-        onClick={() => {
-          removeSelectedUsers();
+    <Form form={form} onFinish={onFinish}>
+      <Table
+        rowSelection={{
+          type: "checkbox",
+          ...rowSelection,
         }}
-      >
-        Delete Selected
-      </Button>
-    </>
+        loading={loading}
+        pagination={{ position: ["bottomCenter"] }}
+        columns={columns}
+        dataSource={users.filter((user) => search(user, searchQuery))}
+        rowKey="id"
+      ></Table>
+    </Form>
   );
 }
+
+export default AdminTable;
