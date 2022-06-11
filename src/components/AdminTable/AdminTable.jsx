@@ -2,6 +2,7 @@ import { Button, Form, Input, notification, Table, Tooltip } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { DeleteOutlined, EditTwoTone, SaveOutlined } from "@ant-design/icons";
+import Search from "antd/lib/transfer/search";
 
 const openNotification = (placement, message) => {
   notification.info({
@@ -17,6 +18,7 @@ export default function AdminTable() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [form] = Form.useForm();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const removeUser = async (id) => {
     setLoading(true);
@@ -219,8 +221,28 @@ export default function AdminTable() {
     setEditingRow(null);
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
+
+  const search = (user) => {
+    const foundName = user.name.toLowerCase().includes(searchQuery);
+    const foundEmail = user.email.toLowerCase().includes(searchQuery);
+    const foundRole = user.role.toLowerCase().includes(searchQuery);
+
+    if (foundName || foundEmail || foundRole) {
+      return true;
+    }
+    return false;
+  };
+
+  console.log(searchQuery);
+
   return (
     <>
+      <div style={{ marginBottom: "8px" }}>
+        <Search placeholder="input search text" onChange={handleSearch} />
+      </div>
       <Form form={form} onFinish={onFinish}>
         <Table
           rowSelection={{
@@ -230,7 +252,7 @@ export default function AdminTable() {
           loading={loading}
           pagination={{ position: ["bottomCenter"] }}
           columns={columns}
-          dataSource={users}
+          dataSource={users.filter((user) => search(user))}
           rowKey="id"
         ></Table>
       </Form>
